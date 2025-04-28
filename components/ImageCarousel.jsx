@@ -28,7 +28,7 @@ export const ImageCarousel = ({ images, interval = 4000 }) => {
           className="absolute w-full h-full object-cover z-0"
           initial={{ opacity: 0  }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          exit={{ opacity: 0.4 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
         />
       </AnimatePresence>

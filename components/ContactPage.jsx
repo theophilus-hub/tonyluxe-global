@@ -1,6 +1,6 @@
 'use client'
 
-import { MapPinIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { MapPinIcon } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -10,6 +10,7 @@ import { Textarea } from "./ui/textarea";
 import Link from "next/link";
 import NavigationBar from "./navigation/NavigationBar";
 import { FooterSection } from "./sections/FooterSection";
+import LocationMap from "./GoogleMap";
 
 export default function ContactPage() {
   // Contact form data
@@ -98,31 +99,9 @@ export default function ContactPage() {
           </h2>
 
           <div className="flex flex-col lg:flex-row items-center gap-8 w-full max-w-[1200px] mx-auto">
-            {/* Map image */}
-            <div className="relative w-full lg:w-2/3 h-[300px] sm:h-[400px] md:h-[484px]">
-              <img
-                className="w-full h-full object-cover rounded-lg"
-                alt="Map location"
-                src="/mask-group.png"
-              />
-
-              {/* Map controls */}
-              <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-                <Button
-                  variant="default"
-                  size="icon"
-                  className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded shadow-md"
-                >
-                  <PlusIcon className="h-4 w-4 sm:h-6 sm:w-6" />
-                </Button>
-                <Button
-                  variant="default"
-                  size="icon"
-                  className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded shadow-md"
-                >
-                  <MinusIcon className="h-4 w-4 sm:h-6 sm:w-6" />
-                </Button>
-              </div>
+            {/* Location Map */}
+            <div className="relative w-full lg:w-2/3 h-[300px] sm:h-[400px] md:h-[484px] rounded-lg overflow-hidden">
+              <LocationMap address="Plot 28, Block 78 Emma Abimbola Cole street, Lekki phase 1, Lagos, Nigeria" />
             </div>
 
             {/* Contact information card */}

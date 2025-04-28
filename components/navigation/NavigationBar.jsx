@@ -16,6 +16,7 @@ export default function NavigationBar() {
     { label: "Cars", href: "#" },
     { label: "Properties", href: "/list" },
     { label: "Contact", href: "/contact" },
+    { label: "Login", href: "/admin/login" },
   ];
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
