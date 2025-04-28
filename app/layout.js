@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: 'TonyLuxe',
   description: 'Luxury properties, cars and more',
+  icons: {
+    icon: '/tony.png',
+  },
 }
 export default function RootLayout({ children }) {
   return (
