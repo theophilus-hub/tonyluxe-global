@@ -68,58 +68,70 @@ function AdminLayoutContent({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-100 relative">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity z-20 lg:hidden" 
           onClick={toggleSidebar}
+          aria-hidden="true"
         ></div>
       )}
       
       {/* Sidebar */}
-      <div className={`
-        fixed inset-y-0 left-0 flex flex-col bg-white shadow-lg transition-all duration-300 ease-in-out z-30
-        ${sidebarOpen ? 'w-64' : 'w-20'}
-        lg:relative lg:translate-x-0
-      `}>
-        <div className="flex items-center justify-between h-16 px-4 border-b bg-white">
+      <div 
+        className={`
+          fixed inset-y-0 left-0 flex flex-col bg-white shadow-lg transition-all duration-300 ease-in-out z-30
+          ${sidebarOpen ? 'w-72 sm:w-64 translate-x-0' : 'w-0 sm:w-20 -translate-x-full sm:translate-x-0'}
+          xl:relative xl:translate-x-0
+        `}
+        aria-label="Sidebar"
+      >
+        <div className="flex items-center justify-between h-16 px-4 border-b bg-brand-primary/5">
           <div className={`flex items-center ${sidebarOpen ? 'justify-between w-full' : 'justify-center'}`}>
             {sidebarOpen && (
               <div className="flex-1 flex justify-start">
-                <Image
-                  src="/tony.png"
-                  alt="TonyLuxe Logo"
-                  width={150}
-                  height={50}
-                  className="object-contain h-10"
-                  priority
-                />
+                <Link href="/admin/dashboard">
+                  <Image
+                    src="/tony.png"
+                    alt="TonyLuxe Logo"
+                    width={150}
+                    height={50}
+                    className="object-contain h-10 transition-opacity hover:opacity-80"
+                    priority
+                  />
+                </Link>
               </div>
             )}
             <button 
               onClick={toggleSidebar} 
-              className="p-1 rounded-full bg-brand-primary text-white hover:bg-brand-primary-dark transition-colors"
+              className="p-1.5 rounded-full bg-brand-primary text-white hover:bg-brand-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
               aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
-              {sidebarOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
+              {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
             </button>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto pt-5 pb-4">
-          <nav className="mt-5 px-2 space-y-1">
+        <div className="flex-1 overflow-y-auto py-4">
+          <nav className="mt-2 px-3 space-y-1.5">
             {navigation.filter(item => item.show).map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={`
-                  group flex items-center px-2 py-2 text-sm font-medium rounded-md
+                  group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                   ${pathname === item.href
                     ? 'bg-brand-primary text-white'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}
                   ${!sidebarOpen && 'justify-center'}
                 `}
                 title={!sidebarOpen ? item.name : ''}
+                onClick={() => {
+                  // Close sidebar on mobile when clicking a link
+                  if (window.innerWidth < 1024) {
+                    setSidebarOpen(false)
+                  }
+                }}
               >
                 <item.icon
                   className={`
@@ -134,7 +146,7 @@ function AdminLayoutContent({ children }) {
             ))}
           </nav>
         </div>
-        <div className="flex-shrink-0 border-t border-gray-200 p-4">
+        <div className="flex-shrink-0 border-t border-gray-200 p-4 mt-auto">
           {status === 'authenticated' ? (
             <div className={`flex ${!sidebarOpen && 'justify-center'}`}>
               <button
@@ -142,7 +154,7 @@ function AdminLayoutContent({ children }) {
                 className={`
                   flex items-center px-3 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 
                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors
-                  ${!sidebarOpen && 'justify-center w-full p-2'}
+                  ${!sidebarOpen ? 'justify-center w-full p-2' : 'w-full'}
                 `}
                 title={!sidebarOpen ? 'Sign out' : ''}
               >
@@ -157,7 +169,7 @@ function AdminLayoutContent({ children }) {
                 className={`
                   flex items-center px-3 py-2 text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 
                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors
-                  ${!sidebarOpen && 'justify-center w-full p-2'}
+                  ${!sidebarOpen ? 'justify-center w-full p-2' : 'w-full'}
                 `}
                 title={!sidebarOpen ? 'Sign in' : ''}
               >
@@ -170,36 +182,53 @@ function AdminLayoutContent({ children }) {
       </div>
 
       {/* Main content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}`}>
-        <div className="sticky top-0 z-10 flex h-16 bg-white shadow lg:hidden">
+      <div className="w-full transition-all duration-300 min-h-screen">
+        <div className="ml-0 sm:ml-20 xl:ml-64 transition-all duration-300">
+        {/* Mobile header - only visible on small screens */}
+        <div className="sticky top-0 z-10 flex h-16 bg-white shadow md:shadow-none sm:hidden">
           <button
             type="button"
             className="px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-primary"
             onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
           >
             <span className="sr-only">Open sidebar</span>
             <Menu size={24} />
           </button>
           
-          <div className="flex-1 px-4 flex items-center justify-center">
-            <Image
-              src="/tony.png"
-              alt="TonyLuxe Logo"
-              width={150}
-              height={50}
-              className="object-contain h-10"
-              priority
-            />
+          <div className="flex-1 px-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <Image
+                src="/tony.png"
+                alt="TonyLuxe Logo"
+                width={150}
+                height={50}
+                className="object-contain h-10"
+                priority
+              />
+            </div>
+            
+            {status === 'authenticated' && (
+              <div className="flex items-center">
+                <span className="mr-2 text-sm font-medium text-gray-700 hidden sm:block">
+                  {session?.user?.name || session?.user?.role || 'User'}
+                </span>
+                <div className="h-8 w-8 rounded-full bg-brand-primary flex items-center justify-center text-white">
+                  <User size={16} />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         <main className="flex-1 pb-8">
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          <div className="py-4 sm:py-6">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 md:px-8">
               {children}
             </div>
           </div>
         </main>
+        </div>
       </div>
     </div>
   )

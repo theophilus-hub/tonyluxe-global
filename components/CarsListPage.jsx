@@ -11,52 +11,52 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { FooterSection } from "./sections/FooterSection";
 import NavigationBar from "./navigation/NavigationBar";
-import PropertyCard from "./PropertyCard";
+import CarCard from "./CarCard";
 
-export default function ListPage() {
-  // State for properties data
-  const [properties, setProperties] = useState([]);
+export default function CarsListPage() {
+  // State for cars data
+  const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activePropertyType, setActivePropertyType] = useState('Buy');
+  const [activeCarType, setActiveCarType] = useState('All');
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
     pages: 0
   });
 
-  // Fetch properties from API
+  // Fetch cars from API
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchCars = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/public/properties?propertyType=${activePropertyType}&page=${pagination.page}`);
+        const response = await fetch(`/api/public/cars?status=${activeCarType !== 'All' ? activeCarType : ''}&page=${pagination.page}`);
         
         if (!response.ok) {
-          throw new Error('Failed to fetch properties');
+          throw new Error('Failed to fetch cars');
         }
         
         const data = await response.json();
-        setProperties(data.properties);
+        setCars(data.properties);
         setPagination(data.pagination);
       } catch (err) {
-        console.error('Error fetching properties:', err);
-        setError('Failed to load properties. Please try again later.');
+        console.error('Error fetching cars:', err);
+        setError('Failed to load cars. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
     
-    fetchProperties();
-  }, [activePropertyType, pagination.page]);
-
-  // Handle property type change
-  const handlePropertyTypeChange = (type) => {
-    setActivePropertyType(type);
-    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when changing property type
+    fetchCars();
+  }, [activeCarType, pagination.page]);
+  
+  // Handle car type change
+  const handleCarTypeChange = (type) => {
+    setActiveCarType(type);
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when changing car type
   };
 
-  // Property filter options
+  // Car filter options
   const filterOptions = [
     {
       icon: <MapPinIcon className="w-4 h-4" />,
@@ -65,17 +65,17 @@ export default function ListPage() {
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
-      label: "Bedrooms",
+      label: "Make",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
-      label: "Amenities",
+      label: "Model",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
     },
     {
       icon: <StarIcon className="w-4 h-4" />,
-      label: "Model/make",
+      label: "Year",
       endIcon: <StarIcon className="w-4 h-4" />,
     },
     {
@@ -85,34 +85,33 @@ export default function ListPage() {
     },
   ];
 
-  // Property type options
-  const propertyTypeOptions = [
-    { label: "Buy", isActive: activePropertyType === 'Buy' },
-    { label: "Rent", isActive: activePropertyType === 'Rent' },
-    { label: "Airbnb", isActive: activePropertyType === 'Airbnb' },
+  // Car type options
+  const carTypeOptions = [
+    { label: "All", isActive: activeCarType === 'All' },
+    { label: "New", isActive: activeCarType === 'New' },
+    { label: "Used", isActive: activeCarType === 'Used' },
   ];
 
-  // Function to split properties into columns for different layouts
-  const getPropertyColumns = () => {
-    if (!properties || properties.length === 0) return [[], [], []];
+  // Function to split cars into columns for different layouts
+  const getCarColumns = () => {
+    if (!cars || cars.length === 0) return [[], [], []];
     
-    const totalProperties = properties.length;
     const column1 = [];
     const column2 = [];
     const column3 = [];
     
-    // Distribute properties across three columns
-    properties.forEach((property, index) => {
-      if (index % 3 === 0) column1.push(property);
-      else if (index % 3 === 1) column2.push(property);
-      else column3.push(property);
+    // Distribute cars across three columns
+    cars.forEach((car, index) => {
+      if (index % 3 === 0) column1.push(car);
+      else if (index % 3 === 1) column2.push(car);
+      else column3.push(car);
     });
     
     return [column1, column2, column3];
   };
   
   // Get columns for layout
-  const columns = getPropertyColumns();
+  const columns = getCarColumns();
 
   return (
     <div className="bg-white flex flex-row justify-center w-full">
@@ -128,19 +127,19 @@ export default function ListPage() {
         {/* Hero Section */}
         <section className="flex flex-col items-center gap-3 sm:gap-4 py-8 sm:py-10 md:py-12 w-full px-4 sm:px-6">
           <h1 className="font-heading-1 text-black text-2xl sm:text-3xl md:text-4xl text-center tracking-tight leading-tight">
-            The best properties for you
+            The best cars for you
           </h1>
 
           <p className="font-body-text text-gray-800 text-sm sm:text-base md:text-lg text-center tracking-normal leading-relaxed max-w-xs sm:max-w-lg md:max-w-2xl">
-            Explore exceptional properties, quality vehicles, and premium Airbnb
+            Explore exceptional vehicles, quality cars, and premium models
             <br className="hidden sm:block" />
-            listings—all designed to enhance your everyday life.
+            all designed to enhance your everyday life.
           </p>
         </section>
 
-        {/* Property Type Toggle */}
+        {/* Car Type Toggle */}
         <div className="flex items-center justify-center gap-2 sm:gap-3 p-3 sm:p-4 mx-auto mt-6 sm:mt-8 bg-gray-100 rounded-full w-fit">
-          {propertyTypeOptions.map((option, index) => (
+          {carTypeOptions.map((option, index) => (
             <Button
               key={index}
               variant={option.isActive ? "default" : "outline"}
@@ -149,7 +148,7 @@ export default function ListPage() {
                   ? "bg-black text-white shadow-sm"
                   : "border border-solid border-gray-500 text-gray-500 shadow-sm"
               }`}
-              onClick={() => handlePropertyTypeChange(option.label)}
+              onClick={() => handleCarTypeChange(option.label)}
             >
               <span
                 className={
@@ -189,26 +188,26 @@ export default function ListPage() {
           </div>
         </div>
 
-        {/* Properties Section */}
+        {/* Cars Section */}
         <section className="w-full px-4 sm:px-6 lg:px-8 mt-10 sm:mt-12">
           {loading ? (
             <div className="flex justify-center items-center py-20">
-              <p className="text-gray-500">Loading properties...</p>
+              <p className="text-gray-500">Loading cars...</p>
             </div>
           ) : error ? (
             <div className="flex justify-center items-center py-20">
               <p className="text-red-500">{error}</p>
             </div>
-          ) : properties.length === 0 ? (
+          ) : cars.length === 0 ? (
             <div className="flex justify-center items-center py-20">
-              <p className="text-gray-500">No properties found. Please try different filters.</p>
+              <p className="text-gray-500">No cars found. Please try different filters.</p>
             </div>
           ) : (
             <>
               {/* Mobile view: single column */}
               <div className="md:hidden flex flex-col gap-6 justify-center mx-auto max-w-[500px]">
-                {properties.map((property, index) => (
-                  <PropertyCard key={`mobile-${property.id || index}`} property={property} />
+                {cars.map((car, index) => (
+                  <CarCard key={`mobile-${car.id || index}`} car={car} />
                 ))}
               </div>
 
@@ -217,20 +216,20 @@ export default function ListPage() {
                 <div className="flex flex-col w-[calc(50%-12px)] gap-6">
                   {columns[0]
                     .concat(columns[2].slice(0, Math.min(4, columns[2].length)))
-                    .map((property, index) => (
-                      <PropertyCard
-                        key={`tablet-col1-${property.id || index}`}
-                        property={property}
+                    .map((car, index) => (
+                      <CarCard
+                        key={`tablet-col1-${car.id || index}`}
+                        car={car}
                       />
                     ))}
                 </div>
                 <div className="flex flex-col w-[calc(50%-12px)] gap-6">
                   {columns[1]
                     .concat(columns[2].slice(Math.min(4, columns[2].length)))
-                    .map((property, index) => (
-                      <PropertyCard
-                        key={`tablet-col2-${property.id || index}`}
-                        property={property}
+                    .map((car, index) => (
+                      <CarCard
+                        key={`tablet-col2-${car.id || index}`}
+                        car={car}
                       />
                     ))}
                 </div>
@@ -243,10 +242,10 @@ export default function ListPage() {
                     key={`desktop-col-${columnIndex}`}
                     className="flex flex-col w-full max-w-[368px] gap-6 xl:gap-10"
                   >
-                    {column.map((property) => (
-                      <PropertyCard
-                        key={`desktop-${columnIndex}-${property.id}`}
-                        property={property}
+                    {column.map((car) => (
+                      <CarCard
+                        key={`desktop-${columnIndex}-${car.id}`}
+                        car={car}
                       />
                     ))}
                   </div>
@@ -256,7 +255,7 @@ export default function ListPage() {
           )}
           
           {/* Pagination */}
-          {!loading && !error && properties.length > 0 && (
+          {!loading && !error && cars.length > 0 && (
             <div className="flex justify-center items-center mt-10 mb-16 gap-2">
               <Button 
                 variant="outline" 

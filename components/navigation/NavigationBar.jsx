@@ -13,8 +13,8 @@ export default function NavigationBar() {
   // Navigation menu items with updated links
   const navItems = [
     { label: "About us", href: "/about" },
-    { label: "Cars", href: "#" },
-    { label: "Properties", href: "/list" },
+    { label: "Cars", href: "/cars" },
+    { label: "Properties", href: "/properties" },
     { label: "Contact", href: "/contact" },
     { label: "Login", href: "/admin/login" },
   ];

@@ -186,6 +186,8 @@ export default function DashboardPage() {
         ))}
       </div>
 
+
+
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Property Stats */}
         <div className="bg-white overflow-hidden shadow rounded-lg">
@@ -194,7 +196,7 @@ export default function DashboardPage() {
               <Home className="h-5 w-5 mr-2 text-brand-primary" />
               Property Statistics
             </h3>
-            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
               <div className="bg-gray-50 overflow-hidden rounded-lg">
                 <div className="px-4 py-5">
                   <div className="flex items-center">
@@ -204,6 +206,20 @@ export default function DashboardPage() {
                     <div className="ml-3">
                       <div className="text-sm font-medium text-gray-500">For Sale</div>
                       <div className="text-lg font-semibold">{properties.forSale}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 overflow-hidden rounded-lg">
+                <div className="px-4 py-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 bg-indigo-100 rounded-md p-2">
+                      <CheckCircle className="h-5 w-5 text-indigo-600" />
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-sm font-medium text-gray-500">Rented</div>
+                      <div className="text-lg font-semibold">{properties.rented}</div>
                     </div>
                   </div>
                 </div>
@@ -241,7 +257,21 @@ export default function DashboardPage() {
                 <div className="px-4 py-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 bg-yellow-100 rounded-md p-2">
-                      <TrendingUp className="h-5 w-5 text-yellow-600" />
+                      <Clock className="h-5 w-5 text-yellow-600" />
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-sm font-medium text-gray-500">Short Let</div>
+                      <div className="text-lg font-semibold">{properties.shortLet || 0}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 overflow-hidden rounded-lg">
+                <div className="px-4 py-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 bg-pink-100 rounded-md p-2">
+                      <TrendingUp className="h-5 w-5 text-pink-600" />
                     </div>
                     <div className="ml-3">
                       <div className="text-sm font-medium text-gray-500">Featured</div>

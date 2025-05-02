@@ -27,7 +27,12 @@ export default async function handler(req, res) {
     const propertiesForRent = await Property.countDocuments({ status: 'For Rent' });
     const propertiesSold = await Property.countDocuments({ status: 'Sold' });
     const propertiesRented = await Property.countDocuments({ status: 'Rented' });
+    const propertiesAvailable = await Property.countDocuments({ status: 'Available' });
+    const propertiesTaken = await Property.countDocuments({ status: 'Taken' });
     const featuredProperties = await Property.countDocuments({ featured: true });
+    
+    // Get Short Let properties
+    const shortLetProperties = await Property.countDocuments({ propertyType: 'Short Let' });
     
     // Get car statistics
     const totalCars = await Car.countDocuments();
@@ -49,7 +54,7 @@ export default async function handler(req, res) {
     
     // Calculate total value of properties and cars
     const propertyValuePipeline = [
-      { $match: { status: { $in: ['For Sale', 'For Rent'] } } },
+      { $match: { status: { $in: ['For Sale', 'For Rent', 'Available'] } } },
       { $group: { _id: null, totalValue: { $sum: '$price' } } }
     ];
     
@@ -72,6 +77,9 @@ export default async function handler(req, res) {
         forRent: propertiesForRent,
         sold: propertiesSold,
         rented: propertiesRented,
+        available: propertiesAvailable,
+        taken: propertiesTaken,
+        shortLet: shortLetProperties,
         featured: featuredProperties,
         totalValue: totalPropertyValue,
         recent: recentProperties

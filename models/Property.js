@@ -37,12 +37,31 @@ const PropertySchema = new mongoose.Schema({
   propertyType: {
     type: String,
     required: [true, 'Please provide the property type'],
-    enum: ['Apartment', 'House', 'Condo', 'Villa', 'Land', 'Commercial']
+    enum: [
+      'Apartment',
+      'House',
+      'Villa',
+      'Condo (Condominium)',
+      'Duplex',
+      'Penthouse',
+      'Studio',
+      'Bungalow',
+      'Townhouse',
+      'Land',
+      'Commercial Property',
+      'Office Space',
+      'Retail',
+      'Hotel/Guest House',
+      'Warehouse',
+      'Industrial Property',
+      'Farm',
+      'Short Let'
+    ]
   },
   status: {
     type: String,
     required: [true, 'Please provide the property status'],
-    enum: ['For Sale', 'For Rent', 'Sold', 'Rented']
+    enum: ['For Sale', 'For Rent', 'Sold', 'Rented', 'Available', 'Taken']
   },
   featured: {
     type: Boolean,
