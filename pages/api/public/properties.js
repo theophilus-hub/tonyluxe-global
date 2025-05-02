@@ -33,6 +33,8 @@ export default async function handler(req, res) {
           query.status = 'For Rent';
         } else if (propertyType === 'Airbnb' || propertyType === 'Short Let') {
           query.propertyType = 'Short Let';
+          // For Short Let, we want to show both Available and Taken properties
+          query.status = { $in: ['Available', 'Taken'] };
         }
       }
       

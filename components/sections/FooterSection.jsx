@@ -13,8 +13,8 @@ export const FooterSection = () => {
 
   // Sales links data
   const salesLinks = [
-    { title: "Cars", href: "#" },
-    { title: "Real estate", href: "/list" },
+    { title: "Cars", href: "/cars" },
+    { title: "Real estate", href: "/properties" },
   ];
 
   // Legal links data

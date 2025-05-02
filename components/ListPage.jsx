@@ -24,13 +24,30 @@ export default function ListPage() {
     page: 1,
     pages: 0
   });
+  
+  // State for filters
+  const [filters, setFilters] = useState({
+    location: '',
+    bedrooms: '',
+    minPrice: '',
+    maxPrice: ''
+  });
 
   // Fetch properties from API
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/public/properties?propertyType=${activePropertyType}&page=${pagination.page}`);
+        
+        // Build query string with all active filters
+        let queryString = `/api/public/properties?propertyType=${activePropertyType}&page=${pagination.page}`;
+        
+        if (filters.location) queryString += `&location=${encodeURIComponent(filters.location)}`;
+        if (filters.bedrooms) queryString += `&bedrooms=${filters.bedrooms}`;
+        if (filters.minPrice) queryString += `&minPrice=${filters.minPrice}`;
+        if (filters.maxPrice) queryString += `&maxPrice=${filters.maxPrice}`;
+        
+        const response = await fetch(queryString);
         
         if (!response.ok) {
           throw new Error('Failed to fetch properties');
@@ -48,12 +65,21 @@ export default function ListPage() {
     };
     
     fetchProperties();
-  }, [activePropertyType, pagination.page]);
+  }, [activePropertyType, pagination.page, filters]);
 
   // Handle property type change
   const handlePropertyTypeChange = (type) => {
     setActivePropertyType(type);
     setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when changing property type
+  };
+  
+  // Handle filter change
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when changing filters
   };
 
   // Property filter options
@@ -62,26 +88,39 @@ export default function ListPage() {
       icon: <MapPinIcon className="w-4 h-4" />,
       label: "Location",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "location",
+      type: "text",
+      placeholder: "Enter location"
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
       label: "Bedrooms",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "bedrooms",
+      type: "select",
+      options: [
+        { value: "", label: "Any" },
+        { value: "1", label: "1" },
+        { value: "2", label: "2" },
+        { value: "3", label: "3" },
+        { value: "4", label: "4+" }
+      ]
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
-      label: "Amenities",
+      label: "Min Price",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
-    },
-    {
-      icon: <StarIcon className="w-4 h-4" />,
-      label: "Model/make",
-      endIcon: <StarIcon className="w-4 h-4" />,
+      filterName: "minPrice",
+      type: "number",
+      placeholder: "Min price"
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
-      label: "Price",
+      label: "Max Price",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "maxPrice",
+      type: "number",
+      placeholder: "Max price"
     },
   ];
 
@@ -174,17 +213,53 @@ export default function ListPage() {
 
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap w-full sm:w-auto">
             {filterOptions.map((filter, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                className="flex items-center justify-center gap-1 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full border border-solid border-gray-500"
-              >
-                <span className="hidden sm:inline-flex">{filter.icon}</span>
-                <span className="font-medium text-gray-500 text-sm tracking-normal leading-normal">
-                  {filter.label}
-                </span>
-                <span className="hidden sm:inline-flex">{filter.endIcon}</span>
-              </Button>
+              <div key={index} className="relative group">
+                <Button
+                  variant="outline"
+                  className="flex items-center justify-center gap-1 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full border border-solid border-gray-500"
+                >
+                  <span className="hidden sm:inline-flex">{filter.icon}</span>
+                  <span className="font-medium text-gray-500 text-sm tracking-normal leading-normal">
+                    {filter.label}
+                  </span>
+                  <span className="hidden sm:inline-flex">{filter.endIcon}</span>
+                </Button>
+                
+                {/* Filter dropdown */}
+                <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 hidden group-hover:block">
+                  {filter.type === 'text' && (
+                    <input
+                      type="text"
+                      placeholder={filter.placeholder}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      value={filters[filter.filterName]}
+                      onChange={(e) => handleFilterChange(filter.filterName, e.target.value)}
+                    />
+                  )}
+                  
+                  {filter.type === 'number' && (
+                    <input
+                      type="number"
+                      placeholder={filter.placeholder}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      value={filters[filter.filterName]}
+                      onChange={(e) => handleFilterChange(filter.filterName, e.target.value)}
+                    />
+                  )}
+                  
+                  {filter.type === 'select' && (
+                    <select
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      value={filters[filter.filterName]}
+                      onChange={(e) => handleFilterChange(filter.filterName, e.target.value)}
+                    >
+                      {filter.options.map((option, idx) => (
+                        <option key={idx} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         </div>

@@ -7,8 +7,8 @@ export default async function handler(req, res) {
   // Check authentication using JWT token
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   
-  // Only admin can access statistics
-  if (!token || token.role !== 'admin') {
+  // Check if user is authenticated and has appropriate role
+  if (!token || (token.role !== 'admin' && token.role !== 'manager')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   

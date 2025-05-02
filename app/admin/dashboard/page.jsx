@@ -37,10 +37,10 @@ export default function DashboardPage() {
       }
     }
 
-    if (session?.user?.role === 'admin') {
+    // Both admin and manager can fetch stats now
+    if (session?.user?.role === 'admin' || session?.user?.role === 'manager') {
       fetchStats()
-    } else if (session?.user?.role === 'manager') {
-      // For manager, we don't need to fetch stats, just set loading to false
+    } else {
       setLoading(false)
     }
   }, [session])

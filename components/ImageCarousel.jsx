@@ -48,7 +48,7 @@ export const ImageCarousel = ({ images, interval = 4000 }) => {
             listings—all designed to enhance your everyday life.
           </p>
           
-          <Link href="/list">
+          <Link href="/properties">
             <Button className="mt-4 relative flex items-center justify-center gap-2 px-6 py-3 bg-brand-light text-black rounded-md hover:bg-brand-primary hover:text-brand-light transition-colors shadow-lg w-auto">
               <span className="font-semibold">
                 Explore our listings

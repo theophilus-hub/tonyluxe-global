@@ -24,13 +24,34 @@ export default function CarsListPage() {
     page: 1,
     pages: 0
   });
+  
+  // State for filters
+  const [filters, setFilters] = useState({
+    location: '',
+    make: '',
+    model: '',
+    year: '',
+    minPrice: '',
+    maxPrice: ''
+  });
 
   // Fetch cars from API
   useEffect(() => {
     const fetchCars = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/public/cars?status=${activeCarType !== 'All' ? activeCarType : ''}&page=${pagination.page}`);
+        
+        // Build query string with all active filters
+        let queryString = `/api/public/cars?status=${activeCarType !== 'All' ? activeCarType : ''}&page=${pagination.page}`;
+        
+        if (filters.location) queryString += `&location=${encodeURIComponent(filters.location)}`;
+        if (filters.make) queryString += `&make=${encodeURIComponent(filters.make)}`;
+        if (filters.model) queryString += `&model=${encodeURIComponent(filters.model)}`;
+        if (filters.year) queryString += `&year=${filters.year}`;
+        if (filters.minPrice) queryString += `&minPrice=${filters.minPrice}`;
+        if (filters.maxPrice) queryString += `&maxPrice=${filters.maxPrice}`;
+        
+        const response = await fetch(queryString);
         
         if (!response.ok) {
           throw new Error('Failed to fetch cars');
@@ -48,12 +69,21 @@ export default function CarsListPage() {
     };
     
     fetchCars();
-  }, [activeCarType, pagination.page]);
+  }, [activeCarType, pagination.page, filters]);
   
   // Handle car type change
   const handleCarTypeChange = (type) => {
     setActiveCarType(type);
     setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when changing car type
+  };
+  
+  // Handle filter change
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when changing filters
   };
 
   // Car filter options
@@ -62,26 +92,62 @@ export default function CarsListPage() {
       icon: <MapPinIcon className="w-4 h-4" />,
       label: "Location",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "location",
+      type: "text",
+      placeholder: "Enter location"
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
       label: "Make",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "make",
+      type: "text",
+      placeholder: "Enter make"
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
       label: "Model",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "model",
+      type: "text",
+      placeholder: "Enter model"
     },
     {
       icon: <StarIcon className="w-4 h-4" />,
       label: "Year",
       endIcon: <StarIcon className="w-4 h-4" />,
+      filterName: "year",
+      type: "select",
+      options: [
+        { value: "", label: "Any" },
+        { value: "2025", label: "2025" },
+        { value: "2024", label: "2024" },
+        { value: "2023", label: "2023" },
+        { value: "2022", label: "2022" },
+        { value: "2021", label: "2021" },
+        { value: "2020", label: "2020" },
+        { value: "2019", label: "2019" },
+        { value: "2018", label: "2018" },
+        { value: "2017", label: "2017" },
+        { value: "2016", label: "2016" },
+        { value: "2015", label: "2015" }
+      ]
     },
     {
       icon: <BanknoteIcon className="w-4 h-4" />,
-      label: "Price",
+      label: "Min Price",
       endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "minPrice",
+      type: "number",
+      placeholder: "Min price"
+    },
+    {
+      icon: <BanknoteIcon className="w-4 h-4" />,
+      label: "Max Price",
+      endIcon: <ChevronDownIcon className="w-4 h-4" />,
+      filterName: "maxPrice",
+      type: "number",
+      placeholder: "Max price"
     },
   ];
 
@@ -173,17 +239,53 @@ export default function CarsListPage() {
 
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap w-full sm:w-auto">
             {filterOptions.map((filter, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                className="flex items-center justify-center gap-1 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full border border-solid border-gray-500"
-              >
-                <span className="hidden sm:inline-flex">{filter.icon}</span>
-                <span className="font-medium text-gray-500 text-sm tracking-normal leading-normal">
-                  {filter.label}
-                </span>
-                <span className="hidden sm:inline-flex">{filter.endIcon}</span>
-              </Button>
+              <div key={index} className="relative group">
+                <Button
+                  variant="outline"
+                  className="flex items-center justify-center gap-1 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full border border-solid border-gray-500"
+                >
+                  <span className="hidden sm:inline-flex">{filter.icon}</span>
+                  <span className="font-medium text-gray-500 text-sm tracking-normal leading-normal">
+                    {filter.label}
+                  </span>
+                  <span className="hidden sm:inline-flex">{filter.endIcon}</span>
+                </Button>
+                
+                {/* Filter dropdown */}
+                <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 hidden group-hover:block">
+                  {filter.type === 'text' && (
+                    <input
+                      type="text"
+                      placeholder={filter.placeholder}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      value={filters[filter.filterName]}
+                      onChange={(e) => handleFilterChange(filter.filterName, e.target.value)}
+                    />
+                  )}
+                  
+                  {filter.type === 'number' && (
+                    <input
+                      type="number"
+                      placeholder={filter.placeholder}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      value={filters[filter.filterName]}
+                      onChange={(e) => handleFilterChange(filter.filterName, e.target.value)}
+                    />
+                  )}
+                  
+                  {filter.type === 'select' && (
+                    <select
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      value={filters[filter.filterName]}
+                      onChange={(e) => handleFilterChange(filter.filterName, e.target.value)}
+                    >
+                      {filter.options.map((option, idx) => (
+                        <option key={idx} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         </div>
