@@ -21,7 +21,12 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/stats')
+        const response = await fetch('/api/stats', {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         
         if (!response.ok) {
           throw new Error('Failed to fetch statistics')
