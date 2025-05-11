@@ -3,10 +3,12 @@
 import React from "react";
 import { BookmarkIcon, MapPinIcon, HomeIcon, Tag, Bath, Bed, Info } from "lucide-react";
 import { Card } from "./ui/card";
+import Link from "next/link";
 
 export default function PropertyCard({ property }) {
   return (
-    <Card className="w-full bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden p-0 m-0">
+    <Link href={`/properties/${property.id}`} className="block cursor-pointer transition-transform hover:scale-[1.02] duration-200">
+      <Card className="w-full bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden p-0 m-0">
       <div className="relative">
         <img
           className="w-full h-[240px] object-cover"
@@ -49,6 +51,7 @@ export default function PropertyCard({ property }) {
           </div>
         </div>
       </div>
-    </Card>
+      </Card>
+    </Link>
   );
 }

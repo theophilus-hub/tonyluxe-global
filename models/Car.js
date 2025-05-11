@@ -47,6 +47,12 @@ const CarSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide the car color']
   },
+  condition: {
+    type: String,
+    required: [true, 'Please provide the car condition'],
+    enum: ['New', 'Used'],
+    default: 'Used'
+  },
   status: {
     type: String,
     required: [true, 'Please provide the car status'],

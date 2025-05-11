@@ -50,26 +50,58 @@ export const FooterSection = () => {
                   src="/heroicons-solid-map-pin.svg"
                 />
               </div>
-              <div className="font-body-text-2 font-[number:var(--body-text-2-font-weight)] text-white text-[length:var(--body-text-2-font-size)] tracking-[var(--body-text-2-letter-spacing)] leading-[var(--body-text-2-line-height)] [font-style:var(--body-text-2-font-style)]">
+              <Link 
+                href="https://maps.app.goo.gl/r5Jq9BPDWWEUdCXGA?g_st=iw" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="font-body-text-2 font-[number:var(--body-text-2-font-weight)] text-white text-[length:var(--body-text-2-font-size)] tracking-[var(--body-text-2-letter-spacing)] leading-[var(--body-text-2-line-height)] [font-style:var(--body-text-2-font-style)] hover:underline"
+              >
                 Plot 28, Block 78 Emma Abimbola Cole street,
                 <br />
                 Lekki phase 1, Lagos, nigeria
-              </div>
+              </Link>
             </div>
 
             {/* Social Media Icons */}
             <div className="inline-flex items-start gap-4">
-              <img
-                className="w-6 h-6"
-                alt="Social media icon"
-                src="/vector.svg"
-              />
-              <img
-                className="w-6 h-6"
-                alt="Social media icon"
-                src="/vector-1.svg"
-              />
-              <img className="w-6 h-6" alt="X social media icon" src="/x.png" />
+              <Link href="#" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                <img
+                  className="w-6 h-6 hover:opacity-80 transition-opacity"
+                  alt="Facebook icon"
+                  src="/vector.svg"
+                />
+              </Link>
+              <Link 
+                href="https://www.instagram.com/tonyluxeglobal?igsh=ZzN3OW55Y3dmOW56" 
+                aria-label="Instagram"
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <img
+                  className="w-6 h-6 hover:opacity-80 transition-opacity"
+                  alt="Instagram icon"
+                  src="/vector-1.svg"
+                />
+              </Link>
+              <Link href="#" aria-label="X (Twitter)" target="_blank" rel="noopener noreferrer">
+                <img 
+                  className="w-6 h-6 hover:opacity-80 transition-opacity" 
+                  alt="X social media icon" 
+                  src="/x.png" 
+                />
+              </Link>
+              <Link 
+                href="https://vm.tiktok.com/ZMBTwtkDb/" 
+                aria-label="TikTok"
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <img 
+                  className="w-6 h-6 hover:opacity-80 transition-opacity" 
+                  alt="TikTok icon" 
+                  src="/tiktok.svg" 
+                />
+              </Link>
             </div>
           </div>
 

@@ -3,10 +3,12 @@
 import React from "react";
 import { Card } from "./ui/card";
 import { CarIcon, Calendar, Settings, Tag, MapPin } from "lucide-react";
+import Link from "next/link";
 
 export default function CarCard({ car }) {
   return (
-    <Card className="w-full bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden p-0 m-0">
+    <Link href={`/cars/${car.id}`} className="block cursor-pointer transition-transform hover:scale-[1.02] duration-200">
+      <Card className="w-full bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden p-0 m-0">
       <div className="relative">
         <img
           className="w-full h-[240px] object-cover"
@@ -21,6 +23,14 @@ export default function CarCard({ car }) {
             <Tag className="w-5 h-5 text-gray-600" />
             <span className="font-medium text-sm">Price:</span>
             <span className="font-semibold text-sm">{car.price}</span>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <Settings className="w-5 h-5 text-gray-600" />
+            <span className="font-medium text-sm">Condition:</span>
+            <span className="font-semibold text-sm">{car.condition || 'Used'}</span>
           </div>
         </div>
 
@@ -56,6 +66,7 @@ export default function CarCard({ car }) {
           </div>
         </div>
       </div>
-    </Card>
+      </Card>
+    </Link>
   );
 }

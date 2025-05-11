@@ -20,7 +20,8 @@ export default async function handler(req, res) {
         make,
         model,
         year,
-        status
+        status,
+        condition
       } = req.query;
       
       // Build query
@@ -29,6 +30,20 @@ export default async function handler(req, res) {
       // Filter by status
       if (status) {
         query.status = status;
+      }
+      
+      // Filter by condition
+      if (condition) {
+        // Handle cars that might not have condition field yet
+        if (condition === 'New') {
+          query.condition = 'New';
+        } else if (condition === 'Used') {
+          // For Used cars, include both explicitly marked Used and those without condition
+          query.$or = [
+            { condition: 'Used' },
+            { condition: { $exists: false } }
+          ];
+        }
       }
       
       // Featured cars
@@ -79,6 +94,7 @@ export default async function handler(req, res) {
         location: car.location || 'Nigeria',
         bedBath: `${car.make}/${car.model}`, // Reusing bedBath field for make/model
         status: car.status,
+        condition: car.condition || 'Used', // Include condition with fallback
         make: car.make,
         model: car.model,
         year: car.year,

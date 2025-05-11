@@ -45,7 +45,12 @@ export default function CarsListPage() {
         setLoading(true);
         
         // Build query string with all active filters
-        let queryString = `/api/public/cars?status=${activeCarType !== 'All' ? activeCarType : ''}&page=${pagination.page}`;
+        let queryString = `/api/public/cars?page=${pagination.page}`;        
+        
+        // Add condition filter based on car type
+        if (activeCarType === 'New' || activeCarType === 'Used') {
+          queryString += `&condition=${activeCarType}`;
+        }
         
         if (filters.location) queryString += `&location=${encodeURIComponent(filters.location)}`;
         if (filters.make) queryString += `&make=${encodeURIComponent(filters.make)}`;
@@ -185,7 +190,7 @@ export default function CarsListPage() {
     },
   ];
 
-  // Car type options
+  // Car type options (based on condition)
   const carTypeOptions = [
     { label: "All", isActive: activeCarType === 'All' },
     { label: "New", isActive: activeCarType === 'New' },

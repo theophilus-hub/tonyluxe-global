@@ -25,6 +25,7 @@ export default function CarForm({ car = null }) {
     fuelType: 'Petrol',
     transmission: 'Automatic',
     color: '',
+    condition: 'Used',
     status: 'For Sale',
     featured: false,
     images: []
@@ -50,6 +51,7 @@ export default function CarForm({ car = null }) {
         fuelType: car.fuelType || 'Petrol',
         transmission: car.transmission || 'Automatic',
         color: car.color || '',
+        condition: car.condition || 'Used',
         status: car.status || 'For Sale',
         featured: car.featured || false,
         images: car.images || []
@@ -237,6 +239,10 @@ export default function CarForm({ car = null }) {
   
   const transmissionTypes = [
     'Automatic', 'Manual', 'Semi-Automatic'
+  ]
+  
+  const conditionOptions = [
+    'New', 'Used'
   ]
   
   const statusOptions = [
@@ -468,6 +474,29 @@ export default function CarForm({ car = null }) {
                   {transmissionTypes.map((type) => (
                     <option key={type} value={type}>
                       {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            {/* Condition */}
+            <div className="sm:col-span-2">
+              <label htmlFor="condition" className="block text-sm font-medium text-gray-700">
+                Condition *
+              </label>
+              <div className="mt-2">
+                <select
+                  id="condition"
+                  name="condition"
+                  value={formData.condition}
+                  onChange={handleChange}
+                  className="shadow-sm focus:ring-brand-primary focus:border-brand-primary block w-full text-base py-2 px-3 border-gray-300 rounded-md"
+                  required
+                >
+                  {conditionOptions.map((condition) => (
+                    <option key={condition} value={condition}>
+                      {condition}
                     </option>
                   ))}
                 </select>

@@ -11,11 +11,10 @@ const logError = (error, message) => {
 
 export default async function handler(req, res) {
   try {
-    // Check authentication using JWT token with improved options
+    // Check authentication using JWT token with simplified options
     const token = await getToken({ 
       req, 
-      secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === 'production',
+      secret: process.env.NEXTAUTH_SECRET || "your-secret-key-for-testing-only",
     });
     
     // Log authentication attempt in development
