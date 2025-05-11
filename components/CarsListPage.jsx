@@ -34,6 +34,9 @@ export default function CarsListPage() {
     minPrice: '',
     maxPrice: ''
   });
+  
+  // State to track which dropdown is open
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   // Fetch cars from API
   useEffect(() => {
@@ -85,6 +88,37 @@ export default function CarsListPage() {
     }));
     setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when changing filters
   };
+  
+  // Toggle dropdown open/close
+  const toggleDropdown = (index) => {
+    setOpenDropdown(openDropdown === index ? null : index);
+  };
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openDropdown !== null) {
+        const dropdowns = document.querySelectorAll('.car-filter-dropdown');
+        let clickedInside = false;
+        
+        dropdowns.forEach((dropdown, index) => {
+          if (dropdown.contains(event.target) || 
+              document.querySelector(`.car-filter-button-${index}`)?.contains(event.target)) {
+            clickedInside = true;
+          }
+        });
+        
+        if (!clickedInside) {
+          setOpenDropdown(null);
+        }
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openDropdown]);
 
   // Car filter options
   const filterOptions = [
@@ -239,20 +273,26 @@ export default function CarsListPage() {
 
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap w-full sm:w-auto">
             {filterOptions.map((filter, index) => (
-              <div key={index} className="relative group">
+              <div key={index} className="relative">
                 <Button
                   variant="outline"
-                  className="flex items-center justify-center gap-1 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full border border-solid border-gray-500"
+                  className={`car-filter-button-${index} flex items-center justify-center gap-1 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full border border-solid ${openDropdown === index || filters[filter.filterName] ? 'border-black text-black' : 'border-gray-500 text-gray-500'}`}
+                  onClick={() => toggleDropdown(index)}
                 >
                   <span className="hidden sm:inline-flex">{filter.icon}</span>
-                  <span className="font-medium text-gray-500 text-sm tracking-normal leading-normal">
+                  <span className="font-medium text-sm tracking-normal leading-normal">
                     {filter.label}
+                    {filters[filter.filterName] && filter.type === 'select' && filter.options ? (
+                      <>: <span className="font-semibold">{filter.options.find(opt => opt.value === filters[filter.filterName])?.label || filters[filter.filterName]}</span></>
+                    ) : filters[filter.filterName] ? (
+                      <>: <span className="font-semibold">{filters[filter.filterName]}</span></>
+                    ) : null}
                   </span>
                   <span className="hidden sm:inline-flex">{filter.endIcon}</span>
                 </Button>
                 
                 {/* Filter dropdown */}
-                <div className="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 hidden group-hover:block">
+                <div className={`car-filter-dropdown absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 ${openDropdown === index ? 'block' : 'hidden'}`}>
                   {filter.type === 'text' && (
                     <input
                       type="text"

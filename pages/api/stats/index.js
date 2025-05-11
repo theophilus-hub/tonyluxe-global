@@ -3,23 +3,48 @@ import connectToDatabase from '../../../lib/mongodb';
 import Property from '../../../models/Property';
 import Car from '../../../models/Car';
 
+// Helper function to log errors in production
+const logError = (error, message) => {
+  console.error(`Stats API Error - ${message}:`, error);
+  return { error: message, details: process.env.NODE_ENV === 'development' ? error.message : undefined };
+};
+
 export default async function handler(req, res) {
-  // Check authentication using JWT token
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  
-  // Check if user is authenticated and has appropriate role
-  if (!token || (token.role !== 'admin' && token.role !== 'manager')) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', ['GET']);
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
-  }
-  
   try {
+    // Check authentication using JWT token with improved options
+    const token = await getToken({ 
+      req, 
+      secret: process.env.NEXTAUTH_SECRET,
+      secureCookie: process.env.NODE_ENV === 'production',
+    });
+    
+    // Log authentication attempt in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Auth token received:', token ? 'Valid token' : 'No token');
+      if (token) console.log('User role:', token.role);
+    }
+    
+    // Check if user is authenticated
+    if (!token) {
+      return res.status(401).json({ error: 'Authentication required', code: 'NO_TOKEN' });
+    }
+    
+    // Check if user has appropriate role
+    if (token.role !== 'admin' && token.role !== 'manager') {
+      return res.status(403).json({ error: 'Insufficient permissions', code: 'INVALID_ROLE' });
+    }
+  
+    if (req.method !== 'GET') {
+      res.setHeader('Allow', ['GET']);
+      return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+    }
     // Connect to the database
     await connectToDatabase();
+    
+    // Log successful connection in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Successfully connected to database');
+    }
     
     // Get property statistics
     const totalProperties = await Property.countDocuments();
@@ -99,6 +124,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Error fetching statistics:', error);
-    return res.status(500).json({ error: 'Error fetching statistics' });
+    res.status(500).json(logError(error, 'Failed to fetch statistics'));
   }
 }

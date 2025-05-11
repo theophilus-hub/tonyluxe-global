@@ -12,41 +12,40 @@ import { ArrowUpRightIcon } from "lucide-react";
 const testimonials = [
   {
     id: 1,
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    name: "Chinenye Okafor",
+    text: "Tonyluxe Global provided exceptional service in helping me find my dream property. Their attention to detail and understanding of my needs made the process seamless and enjoyable.",
+    name: "Mr. Adeyemi Williamson",
     image: "/ellipse-2-6.png",
   },
   {
     id: 2,
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    name: "Tarri Theophilus",
+    text: "I've worked with many real estate companies, but none compare to the professionalism and dedication of Tonyluxe Global. They helped me secure an excellent investment property that has appreciated significantly in value.",
+    name: "Mr. Ladi",
     image: "/ellipse-2-7.png",
   },
   {
     id: 3,
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    name: "Matthew Olawole",
+    text: "As a busy medical professional, I needed a hassle-free experience when purchasing my new home. Tonyluxe Global exceeded my expectations with their efficiency and expert guidance throughout the entire process.",
+    name: "Dr. Raymond",
     image: "/ellipse-2-8.png",
   },
   {
     id: 4,
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    name: "Ndukwe Beauty",
+    text: "The team at Tonyluxe Global went above and beyond to help me find the perfect car for my family. Their knowledge of the market and negotiation skills saved me both time and money. I couldn't be happier with my purchase.",
+    name: "Chief Oluwaseun Adebayo",
     image: "/ellipse-2-3.png",
   },
   {
     id: 5,
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    name: "Sabinus Nwafor",
+    text: "I was impressed by how Tonyluxe Global handled the sale of my property. Their marketing strategy attracted multiple offers, and I ended up selling for well above my asking price. Truly outstanding service!",
+    name: "Mrs. Folake Ogunleye",
     image: "/ellipse-2-4.png",
   },
   {
     id: 6,
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    name: "Yahaya Bello",
+    text: "After searching for months on my own, I contacted Tonyluxe Global and within two weeks they found me the perfect short-let apartment. Their local knowledge and connections in the industry are unmatched. I highly recommend their services.",
+    name: "Mr. Babatunde Oluwatoyin",
     image: "/ellipse-2-5.png",
   },
-
 ];
 
 // Feature data for mapping
