@@ -21,7 +21,17 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        // First, get the current session to ensure we have fresh auth data
+        const sessionResponse = await fetch('/api/auth/session')
+        const sessionData = await sessionResponse.json()
+        
+        if (!sessionData || !sessionData.user) {
+          throw new Error('Authentication required')
+        }
+        
+        // Now fetch stats with the session cookie that should be set
         const response = await fetch('/api/stats', {
+          method: 'GET',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
@@ -29,7 +39,11 @@ export default function DashboardPage() {
         })
         
         if (!response.ok) {
-          throw new Error('Failed to fetch statistics')
+          if (response.status === 401) {
+            throw new Error('Authentication failed. Please try logging in again.')
+          } else {
+            throw new Error(`Failed to fetch statistics: ${response.status}`)
+          }
         }
         
         const data = await response.json()

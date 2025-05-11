@@ -12,10 +12,7 @@ const logError = (error, message) => {
 export default async function handler(req, res) {
   try {
     // Check authentication using JWT token with simplified options
-    const token = await getToken({ 
-      req, 
-      secret: process.env.NEXTAUTH_SECRET || "your-secret-key-for-testing-only",
-    });
+    const token = await getToken({ req });
     
     // Log authentication attempt in development
     if (process.env.NODE_ENV === 'development') {
@@ -25,11 +22,13 @@ export default async function handler(req, res) {
     
     // Check if user is authenticated
     if (!token) {
+      console.error('Authentication failed: No token');
       return res.status(401).json({ error: 'Authentication required', code: 'NO_TOKEN' });
     }
     
     // Check if user has appropriate role
     if (token.role !== 'admin' && token.role !== 'manager') {
+      console.error(`Authentication failed: Invalid role ${token.role}`);
       return res.status(403).json({ error: 'Insufficient permissions', code: 'INVALID_ROLE' });
     }
   
