@@ -17,8 +17,11 @@ export default function DashboardPage() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  // No longer need debug info
 
   useEffect(() => {
+    // Debug info removed
+    
     const fetchStats = async () => {
       try {
         // First, get the current session to ensure we have fresh auth data
@@ -85,15 +88,24 @@ export default function DashboardPage() {
             <p className="text-sm text-red-700">
               Error loading statistics: {error}
             </p>
+            {/* Debug info removed */}
           </div>
         </div>
       </div>
     )
   }
 
-  if (session?.user?.role === 'manager') {
+  // Check if user is admin to show the full dashboard
+  const isAdmin = session?.user?.role === 'admin';
+  const isManager = session?.user?.role === 'manager';
+  
+  // Debug info display removed
+
+  // Show simplified dashboard for manager role only
+  if (isManager && !isAdmin) {
     return (
       <div className="bg-white shadow rounded-lg p-6">
+        {/* Debug info removed */}
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Welcome, {session?.user?.name || 'Manager'}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -181,6 +193,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* Debug info removed */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card, index) => (
           <div
@@ -309,7 +322,7 @@ export default function DashboardPage() {
             <div className="mt-6">
               <h4 className="text-sm font-medium text-gray-500">Recent Properties</h4>
               <ul className="mt-3 divide-y divide-gray-100">
-                {properties.recent.map((property, index) => (
+                {properties.recent && properties.recent.map((property, index) => (
                   <li key={index} className="py-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
@@ -389,7 +402,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="ml-3">
                       <div className="text-sm font-medium text-gray-500">Total Value</div>
-                      <div className="text-lg font-semibold">₦{cars.totalValue.toLocaleString()}</div>
+                      <div className="text-lg font-semibold">₦{cars.totalValue?.toLocaleString() || 0}</div>
                     </div>
                   </div>
                 </div>
@@ -399,7 +412,7 @@ export default function DashboardPage() {
             <div className="mt-6">
               <h4 className="text-sm font-medium text-gray-500">Recent Cars</h4>
               <ul className="mt-3 divide-y divide-gray-100">
-                {cars.recent.map((car, index) => (
+                {cars.recent && cars.recent.map((car, index) => (
                   <li key={index} className="py-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">

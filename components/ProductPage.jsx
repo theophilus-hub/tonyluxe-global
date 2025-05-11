@@ -208,12 +208,12 @@ export default function ProductPage({ product, type = 'property' }) {
         {
           icon: <HomeIcon className="w-5 h-5 text-contentstrong" />,
           label: "Bedrooms:",
-          value: product?.bedrooms || "N/A",
+          value: product?.bedrooms ? product.bedrooms.toString() : "N/A",
         },
         {
           icon: <HomeIcon className="w-5 h-5 text-contentstrong" />,
           label: "Bathrooms:",
-          value: product?.bathrooms || "N/A",
+          value: product?.bathrooms ? product.bathrooms.toString() : "N/A",
         },
         {
           icon: <HomeIcon className="w-5 h-5 text-contentstrong" />,

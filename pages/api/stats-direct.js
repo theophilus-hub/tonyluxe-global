@@ -38,10 +38,8 @@ export default async function handler(req, res) {
             (sessionData.role === 'admin' || sessionData.role === 'manager')) {
           isAuthenticated = true;
           role = sessionData.role;
-          console.log('Authenticated via X-Session-Data header');
         }
       } catch (e) {
-        console.log('Session data header parsing failed:', e.message);
         // Continue to other auth methods
       }
     }
@@ -61,10 +59,9 @@ export default async function handler(req, res) {
               (sessionData.role === 'admin' || sessionData.role === 'manager')) {
             isAuthenticated = true;
             role = sessionData.role;
-            console.log('Authenticated via cookie presence + session data');
           }
         } catch (e) {
-          console.log('Session data parsing failed:', e.message);
+          // Continue with other auth methods
         }
       }
     }
@@ -77,7 +74,6 @@ export default async function handler(req, res) {
         if (queryRole === 'admin' || queryRole === 'manager') {
           isAuthenticated = true;
           role = queryRole;
-          console.log('Authenticated via query parameter (dev only)');
         }
       }
     }
@@ -105,16 +101,42 @@ export default async function handler(req, res) {
     const totalProperties = await Property.countDocuments();
     const propertiesForSale = await Property.countDocuments({ status: 'For Sale' });
     const propertiesForRent = await Property.countDocuments({ status: 'For Rent' });
+    const propertiesSold = await Property.countDocuments({ status: 'Sold' });
+    const propertiesRented = await Property.countDocuments({ status: 'Rented' });
+    const propertiesShortLet = await Property.countDocuments({ status: 'Short Let' });
     const featuredProperties = await Property.countDocuments({ featured: true });
+    
+    // Get recent properties
+    const recentProperties = await Property.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('title price status createdAt');
+    
+    // Get property value
+    const properties = await Property.find({}, 'price');
+    const totalPropertyValue = properties.reduce((sum, property) => sum + (property.price || 0), 0);
     
     // Get car statistics
     const totalCars = await Car.countDocuments();
+    const carsForSale = await Car.countDocuments({ status: 'For Sale' });
+    const carsSold = await Car.countDocuments({ status: 'Sold' });
     const newCars = await Car.countDocuments({ condition: 'New' });
     const usedCars = await Car.countDocuments({ condition: 'Used' });
     const featuredCars = await Car.countDocuments({ featured: true });
     
-    // Calculate total items
+    // Get recent cars
+    const recentCars = await Car.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('title price status createdAt');
+    
+    // Get car value
+    const cars = await Car.find({}, 'price');
+    const totalCarValue = cars.reduce((sum, car) => sum + (car.price || 0), 0);
+    
+    // Calculate total items and value
     const totalItems = totalProperties + totalCars;
+    const totalValue = totalPropertyValue + totalCarValue;
     
     // Return statistics
     return res.status(200).json({
@@ -122,15 +144,26 @@ export default async function handler(req, res) {
         total: totalProperties,
         forSale: propertiesForSale,
         forRent: propertiesForRent,
-        featured: featuredProperties
+        sold: propertiesSold,
+        rented: propertiesRented,
+        shortLet: propertiesShortLet,
+        featured: featuredProperties,
+        recent: recentProperties
       },
       cars: {
         total: totalCars,
+        forSale: carsForSale,
+        sold: carsSold,
         new: newCars,
         used: usedCars,
-        featured: featuredCars
+        featured: featuredCars,
+        totalValue: totalCarValue,
+        recent: recentCars
       },
-      total: totalItems
+      overall: {
+        totalListings: totalItems,
+        totalValue: totalValue
+      }
     });
   } catch (error) {
     console.error('Stats API Error:', error);

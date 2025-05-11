@@ -36,6 +36,7 @@ export default async function handler(req, res) {
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
         bedBath: `${property.bedrooms}/${property.bathrooms}`,
+        size: property.squareFootage, // Add squareFootage as size for the frontend
         status: property.status,
         propertyType: property.propertyType,
         amenities: property.amenities || [],
