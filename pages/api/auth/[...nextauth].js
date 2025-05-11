@@ -5,10 +5,12 @@ import { compare, hash } from 'bcryptjs';
 // In a production environment, you would store hashed passwords in a database
 // For this example, we're using environment variables for simplicity
 export const authOptions = {
-    // Only enable debug in development environment
+  // Only enable debug in development environment
   debug: process.env.NODE_ENV === 'development',
   // Use consistent secret key
   secret: process.env.NEXTAUTH_SECRET || "your-secret-key-for-testing-only",
+  // Ensure the URL is correctly set for token validation
+  trustHost: true,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -74,7 +76,7 @@ export const authOptions = {
       name: `next-auth.session-token`,
       options: {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         path: '/',
         secure: process.env.NODE_ENV === 'production'
       }

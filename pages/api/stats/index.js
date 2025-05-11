@@ -1,4 +1,5 @@
 import { getToken } from 'next-auth/jwt';
+import { authOptions } from '../auth/[...nextauth]';
 import connectToDatabase from '../../../lib/mongodb';
 import Property from '../../../models/Property';
 import Car from '../../../models/Car';
@@ -11,8 +12,12 @@ const logError = (error, message) => {
 
 export default async function handler(req, res) {
   try {
-    // Check authentication using JWT token with simplified options
-    const token = await getToken({ req });
+    // Check authentication using JWT token with the same options as NextAuth
+    const token = await getToken({ 
+      req, 
+      secret: authOptions.secret,
+      secureCookie: process.env.NODE_ENV === 'production'
+    });
     
     // Log authentication attempt in development
     if (process.env.NODE_ENV === 'development') {
