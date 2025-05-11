@@ -1,4 +1,5 @@
 import { getToken } from 'next-auth/jwt';
+import { authOptions } from './auth/[...nextauth]';
 
 export default async function handler(req, res) {
   try {

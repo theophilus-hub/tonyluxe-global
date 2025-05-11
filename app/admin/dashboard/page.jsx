@@ -29,12 +29,17 @@ export default function DashboardPage() {
           throw new Error('Authentication required')
         }
         
-        // Now fetch stats with the session cookie that should be set
-        const response = await fetch('/api/stats', {
+        // Use the new direct stats API endpoint that uses multiple auth methods
+        const response = await fetch('/api/stats-direct', {
           method: 'GET',
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            // Include session data in a custom header as a backup authentication method
+            'X-Session-Data': JSON.stringify({
+              role: sessionData.user?.role,
+              name: sessionData.user?.name
+            })
           }
         })
         
