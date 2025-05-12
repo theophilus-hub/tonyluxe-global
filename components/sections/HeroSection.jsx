@@ -6,8 +6,8 @@ import Link from "next/link";
 
 export const HeroSection = () => {
   return (
-    <section className="flex flex-col items-center justify-center min-h-[100vh] max-h-[1080px] w-full px-4 py-12">
-      <div className="flex flex-col items-center gap-10 md:gap-12 w-full max-w-[607px] mx-auto">
+    <section className="flex flex-col items-center justify-center h-[100vh]  w-full px-4 py-12">
+      <div className="flex flex-col items-center gap-10 md:gap-12 w-full  mx-auto">
         <div className="flex flex-col items-center gap-4 md:gap-5 w-full">
           <h1 className="font-heading-1 text-bgmain text-[2.5rem] sm:text-[length:var(--heading-1-font-size)] text-center tracking-[var(--heading-1-letter-spacing)] leading-[1.2] sm:leading-[var(--heading-1-line-height)] [font-style:var(--heading-1-font-style)]">
             Luxury and comfort curated just for you

@@ -18,7 +18,7 @@ export const ImageCarousel = ({ images, interval = 4000 }) => {
   }, [images.length, interval]);
 
   return (
-    <div className="relative w-full overflow-hidden h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] xl:h-[700px]">
+    <div className="relative w-full overflow-hidden h-[75vh] sm:h-[75vh] md:h-[85vh] lg:h-[95vh] xl:h-[80vh]">
       {/* Carousel Images */}
       <AnimatePresence mode="sync">
         <motion.img
