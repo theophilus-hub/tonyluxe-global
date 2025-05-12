@@ -28,10 +28,10 @@ import { FooterSection } from "./sections/FooterSection";
 function generateThumbnails(images, productType, onThumbnailClick) {
   if (!images || images.length === 0) {
     // If no images, show placeholders
-    return Array.from({ length: 3 }).map((_, index) => (
+    return Array.from({ length: 4 }).map((_, index) => (
       <div
         key={`placeholder-${index}`}
-        className="w-full h-[80px] md:h-[130px] bg-gray-200 rounded-sm flex items-center justify-center"
+        className="w-full h-[80px] md:h-[120px] bg-gray-200 rounded-sm flex items-center justify-center"
       >
         <span className="text-gray-400 text-sm">No image</span>
       </div>
@@ -40,10 +40,10 @@ function generateThumbnails(images, productType, onThumbnailClick) {
   
   // If only one image, duplicate it for all thumbnails
   if (images.length === 1) {
-    return Array.from({ length: 3 }).map((_, index) => (
+    return Array.from({ length: 4 }).map((_, index) => (
       <img
         key={`single-${index}`}
-        className="w-full h-[80px] md:h-[130px] object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity duration-200 border-2 border-transparent hover:border-blue-500"
+        className="w-full h-[80px] md:h-[120px] object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity duration-200 border-2 border-transparent hover:border-blue-500"
         alt={`${productType} view ${index + 1}`}
         src={images[0]}
         onClick={() => onThumbnailClick(0)}
@@ -51,15 +51,15 @@ function generateThumbnails(images, productType, onThumbnailClick) {
     ));
   }
   
-  // If 2-3 images, show what we have and fill the rest with alternating images
-  if (images.length < 4) {
+  // If 2-4 images, show what we have and fill the rest with alternating images
+  if (images.length < 5) {
     const thumbnails = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       const imageIndex = i % images.length;
       thumbnails.push(
         <img
           key={`thumb-${i}`}
-          className="w-full h-[80px] md:h-[130px] object-cover rounded-sm cursor-pointer hover:opacity-80 transition-opacity duration-200 border-2 border-transparent hover:border-blue-500"
+          className="w-full h-[80px] md:h-[120px] object-cover rounded-sm cursor-pointer hover:opacity-80 transition-opacity duration-200 border-2 border-transparent hover:border-blue-500"
           alt={`${productType} view ${i + 1}`}
           src={images[imageIndex]}
           onClick={() => onThumbnailClick(imageIndex)}
@@ -69,16 +69,16 @@ function generateThumbnails(images, productType, onThumbnailClick) {
     return thumbnails;
   }
   
-  // If 4+ images, show the first 3 thumbnails (excluding the main image which is shown separately)
+  // If 5+ images, show the first 4 thumbnails
   return images.map((image, index) => (
     <img
       key={`multi-${index}`}
-      className={`w-full h-[80px] md:h-[130px] object-cover rounded-sm cursor-pointer hover:opacity-80 transition-opacity duration-200 border-2 ${index === 0 ? 'border-blue-500' : 'border-transparent hover:border-blue-500'}`}
+      className={`w-full h-[80px] md:h-[120px] object-cover rounded-sm cursor-pointer hover:opacity-80 transition-opacity duration-200 border-2 ${index === 0 ? 'border-blue-500' : 'border-transparent hover:border-blue-500'}`}
       alt={`${productType} view ${index + 1}`}
       src={image}
       onClick={() => onThumbnailClick(index)}
     />
-  )).slice(0, 3);
+  )).slice(0, 4);
 }
 
 // Main image carousel component with auto-rotation
@@ -269,6 +269,13 @@ export default function ProductPage({ product, type = 'property' }) {
   ];
 
   // Product page configuration
+  console.log('ProductPage received product:', product);
+  console.log('Interior features:', product?.interiorFeatures);
+  console.log('Exterior features:', product?.exteriorFeatures);
+  
+  // Ensure interior and exterior features are arrays
+  const interiorFeatures = Array.isArray(product?.interiorFeatures) ? product.interiorFeatures : [];
+  const exteriorFeatures = Array.isArray(product?.exteriorFeatures) ? product.exteriorFeatures : [];
 
   return (
     <div className="bg-white flex flex-row justify-center w-full">
@@ -278,9 +285,9 @@ export default function ProductPage({ product, type = 'property' }) {
 
         <main className="px-4 sm:px-6 md:px-10 lg:px-[120px]">
           {/* Product Gallery with Auto-Rotating Carousel */}
-          <section className="flex flex-col md:flex-row items-start gap-6 mb-10">
+          <section className="flex flex-col md:flex-row items-start gap-4 mb-10">
             {/* Main large image with carousel */}
-            <div className="relative w-full md:w-[70%] h-[300px] sm:h-[400px] md:h-[500px] bg-contentstrong rounded-lg overflow-hidden">
+            <div className="relative w-full md:w-[75%] h-[300px] sm:h-[400px] md:h-[500px] bg-contentstrong rounded-lg overflow-hidden">
               {/* Main Image */}
               {product?.images?.length > 0 ? (
                 <MainImageCarousel 
@@ -297,17 +304,19 @@ export default function ProductPage({ product, type = 'property' }) {
             </div>
 
             {/* Thumbnail images */}
-            <div className="flex flex-row md:flex-col w-full md:w-[25%] items-center gap-3 mt-3 md:mt-0">
+            <div className="flex flex-row md:flex-col w-full md:w-[25%] items-center gap-2 mt-3 md:mt-0">
               {/* Generate thumbnails based on available images */}
-              {generateThumbnails(
-                product?.images || [], 
-                isProperty ? 'Property' : 'Car',
-                (index) => {
-                  if (carouselRef.current) {
-                    carouselRef.current.setImageIndex(index);
+              <div className="grid grid-cols-4 md:grid-cols-1 gap-2 w-full">
+                {generateThumbnails(
+                  product?.images || [], 
+                  isProperty ? 'Property' : 'Car',
+                  (index) => {
+                    if (carouselRef.current) {
+                      carouselRef.current.setImageIndex(index);
+                    }
                   }
-                }
-              )}
+                )}
+              </div>
             </div>
           </section>
 
@@ -342,10 +351,10 @@ export default function ProductPage({ product, type = 'property' }) {
                       <>
                         <span className="font-semibold">Interior Features:</span>
                         <br />
-                        {product?.amenities?.filter(a => a.type === 'interior')?.length > 0 ? 
-                          product.amenities.filter(a => a.type === 'interior').map((amenity, index) => (
+                        {interiorFeatures.length > 0 ? 
+                          interiorFeatures.map((feature, index) => (
                             <React.Fragment key={index}>
-                              {amenity.name}
+                              {feature}
                               <br />
                             </React.Fragment>
                           )) : 
@@ -359,10 +368,10 @@ export default function ProductPage({ product, type = 'property' }) {
                         <br />
                         <span className="font-semibold">Exterior Features:</span>
                         <br />
-                        {product?.amenities?.filter(a => a.type === 'exterior')?.length > 0 ? 
-                          product.amenities.filter(a => a.type === 'exterior').map((amenity, index) => (
+                        {exteriorFeatures.length > 0 ? 
+                          exteriorFeatures.map((feature, index) => (
                             <React.Fragment key={index}>
-                              {amenity.name}
+                              {feature}
                               <br />
                             </React.Fragment>
                           )) : 

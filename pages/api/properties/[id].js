@@ -23,7 +23,48 @@ export default async function handler(req, res) {
           return res.status(404).json({ error: 'Property not found' });
         }
         
-        return res.status(200).json({ property });
+        // Log the raw property data from MongoDB
+        console.log('Raw property from MongoDB:', property);
+        console.log('Raw interior features:', property.interiorFeatures);
+        console.log('Raw exterior features:', property.exteriorFeatures);
+        console.log('Interior features type:', typeof property.interiorFeatures);
+        console.log('Interior features is array:', Array.isArray(property.interiorFeatures));
+        
+        // Convert property to plain object to ensure all fields are included
+        const propertyObj = property.toObject();
+        
+        // Log the property after conversion to plain object
+        console.log('Property after toObject():', propertyObj);
+        console.log('Interior features after toObject():', propertyObj.interiorFeatures);
+        console.log('Exterior features after toObject():', propertyObj.exteriorFeatures);
+        
+        // Ensure interior and exterior features are proper JavaScript arrays
+        // This is critical for proper serialization to the client
+        if (Array.isArray(propertyObj.interiorFeatures)) {
+          // Create a new array with the values to ensure it's a plain JavaScript array
+          propertyObj.interiorFeatures = [...propertyObj.interiorFeatures];
+          console.log('Interior features converted to plain JavaScript array');
+        } else {
+          propertyObj.interiorFeatures = [];
+          console.log('Interior features was not an array, converted to empty array');
+        }
+        
+        if (Array.isArray(propertyObj.exteriorFeatures)) {
+          // Create a new array with the values to ensure it's a plain JavaScript array
+          propertyObj.exteriorFeatures = [...propertyObj.exteriorFeatures];
+          console.log('Exterior features converted to plain JavaScript array');
+        } else {
+          propertyObj.exteriorFeatures = [];
+          console.log('Exterior features was not an array, converted to empty array');
+        }
+        
+        console.log('GET property API final response:', {
+          id: propertyObj._id,
+          interiorFeatures: propertyObj.interiorFeatures,
+          exteriorFeatures: propertyObj.exteriorFeatures
+        });
+        
+        return res.status(200).json({ property: propertyObj });
       } catch (error) {
         return res.status(500).json({ error: error.message });
       }
@@ -35,11 +76,38 @@ export default async function handler(req, res) {
       }
       
       try {
+        console.log('Property update request body:', req.body);
+        console.log('Interior features in request:', req.body.interiorFeatures);
+        console.log('Exterior features in request:', req.body.exteriorFeatures);
+        
+        // Ensure interior and exterior features are arrays
+        const updateData = {
+          ...req.body,
+          interiorFeatures: Array.isArray(req.body.interiorFeatures) ? req.body.interiorFeatures : [],
+          exteriorFeatures: Array.isArray(req.body.exteriorFeatures) ? req.body.exteriorFeatures : [],
+          updatedAt: Date.now()
+        };
+        
+        console.log('Processed update data:', {
+          interiorFeatures: updateData.interiorFeatures,
+          exteriorFeatures: updateData.exteriorFeatures
+        });
+        
+        // Log the raw request body for debugging
+        console.log('Raw request body:', req.body);
+        console.log('Request body type:', typeof req.body);
+        console.log('Interior features type:', typeof req.body.interiorFeatures);
+        console.log('Interior features is array:', Array.isArray(req.body.interiorFeatures));
+        
         const property = await Property.findByIdAndUpdate(
           id,
-          { ...req.body, updatedAt: Date.now() },
+          updateData,
           { new: true, runValidators: true }
         );
+        
+        console.log('Updated property:', property);
+        console.log('Interior features after update:', property.interiorFeatures);
+        console.log('Exterior features after update:', property.exteriorFeatures);
         
         if (!property) {
           return res.status(404).json({ error: 'Property not found' });

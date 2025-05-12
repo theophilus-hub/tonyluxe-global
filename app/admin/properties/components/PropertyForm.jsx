@@ -25,8 +25,13 @@ export default function PropertyForm({ property = null }) {
     propertyType: 'Apartment',
     status: 'For Sale',
     featured: false,
+    interiorFeatures: [],
+    exteriorFeatures: [],
     images: []
   })
+  
+  const [newInteriorFeature, setNewInteriorFeature] = useState('')
+  const [newExteriorFeature, setNewExteriorFeature] = useState('')
   
   const [imageFiles, setImageFiles] = useState([])
   const [imagePreviewUrls, setImagePreviewUrls] = useState([])
@@ -68,6 +73,59 @@ export default function PropertyForm({ property = null }) {
   // Initialize form with property data if editing
   useEffect(() => {
     if (isEditing && property) {
+      console.log('Initializing form with property data:', property);
+      console.log('Interior features from property (raw):', property.interiorFeatures);
+      console.log('Exterior features from property (raw):', property.exteriorFeatures);
+      console.log('Interior features type:', typeof property.interiorFeatures);
+      console.log('Interior features is array:', Array.isArray(property.interiorFeatures));
+      console.log('Interior features stringified:', JSON.stringify(property.interiorFeatures));
+      
+      // Ensure interior and exterior features are arrays
+      let interiorFeatures = [];
+      let exteriorFeatures = [];
+      
+      // Handle different possible formats of interior features
+      if (Array.isArray(property.interiorFeatures)) {
+        interiorFeatures = [...property.interiorFeatures];
+        console.log('Interior features is an array, copying directly');
+      } else if (typeof property.interiorFeatures === 'string') {
+        // Handle case where features might be a comma-separated string
+        interiorFeatures = property.interiorFeatures.split(',').map(f => f.trim()).filter(f => f);
+        console.log('Interior features is a string, split into array:', interiorFeatures);
+      } else if (property.interiorFeatures && typeof property.interiorFeatures === 'object') {
+        // Handle case where it might be an object with numeric keys (from JSON parsing)
+        try {
+          interiorFeatures = Object.values(property.interiorFeatures);
+          console.log('Interior features is an object, converted to array:', interiorFeatures);
+        } catch (error) {
+          console.error('Error converting interior features object to array:', error);
+        }
+      }
+      
+      // Handle different possible formats of exterior features
+      if (Array.isArray(property.exteriorFeatures)) {
+        exteriorFeatures = [...property.exteriorFeatures];
+        console.log('Exterior features is an array, copying directly');
+      } else if (typeof property.exteriorFeatures === 'string') {
+        // Handle case where features might be a comma-separated string
+        exteriorFeatures = property.exteriorFeatures.split(',').map(f => f.trim()).filter(f => f);
+        console.log('Exterior features is a string, split into array:', exteriorFeatures);
+      } else if (property.exteriorFeatures && typeof property.exteriorFeatures === 'object') {
+        // Handle case where it might be an object with numeric keys (from JSON parsing)
+        try {
+          exteriorFeatures = Object.values(property.exteriorFeatures);
+          console.log('Exterior features is an object, converted to array:', exteriorFeatures);
+        } catch (error) {
+          console.error('Error converting exterior features object to array:', error);
+        }
+      }
+      
+      console.log('Processed interior features:', interiorFeatures);
+      console.log('Processed exterior features:', exteriorFeatures);
+      console.log('Processed interior features type:', typeof interiorFeatures);
+      console.log('Processed interior features is array:', Array.isArray(interiorFeatures));
+      console.log('Processed interior features stringified:', JSON.stringify(interiorFeatures));
+      
       setFormData({
         title: property.title || '',
         description: property.description || '',
@@ -79,8 +137,15 @@ export default function PropertyForm({ property = null }) {
         propertyType: property.propertyType || 'Apartment',
         status: property.status || 'For Sale',
         featured: property.featured || false,
+        interiorFeatures: interiorFeatures,
+        exteriorFeatures: exteriorFeatures,
         images: property.images || []
       })
+      
+      console.log('Form data initialized with:', {
+        interiorFeatures,
+        exteriorFeatures
+      });
       
       // Set existing images as preview URLs
       setImagePreviewUrls(property.images || [])
@@ -94,6 +159,15 @@ export default function PropertyForm({ property = null }) {
     const updatedFormData = {
       ...formData,
       [name]: value
+    }
+    
+    // Handle input for new features
+    if (name === 'newInteriorFeature') {
+      setNewInteriorFeature(value)
+      return
+    } else if (name === 'newExteriorFeature') {
+      setNewExteriorFeature(value)
+      return
     }
     
     // If property type is changing, we may need to update the status
@@ -231,6 +305,10 @@ export default function PropertyForm({ property = null }) {
       // Combine existing and new image URLs
       const allImageUrls = [...formData.images, ...uploadedImageUrls]
       
+      // Log interior and exterior features before submission
+      console.log('Interior features before submission:', formData.interiorFeatures)
+      console.log('Exterior features before submission:', formData.exteriorFeatures)
+      
       // Prepare data for API
       const propertyData = {
         ...formData,
@@ -238,8 +316,14 @@ export default function PropertyForm({ property = null }) {
         bedrooms: parseInt(formData.bedrooms),
         bathrooms: parseInt(formData.bathrooms),
         squareFootage: parseInt(formData.squareFootage),
+        interiorFeatures: formData.interiorFeatures,
+        exteriorFeatures: formData.exteriorFeatures,
         images: allImageUrls
       }
+      
+      console.log('Sending property data to API:', propertyData);
+      console.log('Interior features in API request:', propertyData.interiorFeatures);
+      console.log('Exterior features in API request:', propertyData.exteriorFeatures);
       
       // Create or update property
       const url = isEditing 
@@ -273,6 +357,53 @@ export default function PropertyForm({ property = null }) {
       setError(err.message)
       setIsSubmitting(false)
       setUploadProgress(0)
+    }
+  }
+  
+  // Functions to handle adding and removing features
+  const addInteriorFeature = () => {
+    if (newInteriorFeature.trim() === '') return
+    
+    setFormData({
+      ...formData,
+      interiorFeatures: [...formData.interiorFeatures, newInteriorFeature.trim()]
+    })
+    setNewInteriorFeature('')
+  }
+  
+  const removeInteriorFeature = (index) => {
+    setFormData({
+      ...formData,
+      interiorFeatures: formData.interiorFeatures.filter((_, i) => i !== index)
+    })
+  }
+  
+  const addExteriorFeature = () => {
+    if (newExteriorFeature.trim() === '') return
+    
+    setFormData({
+      ...formData,
+      exteriorFeatures: [...formData.exteriorFeatures, newExteriorFeature.trim()]
+    })
+    setNewExteriorFeature('')
+  }
+  
+  const removeExteriorFeature = (index) => {
+    setFormData({
+      ...formData,
+      exteriorFeatures: formData.exteriorFeatures.filter((_, i) => i !== index)
+    })
+  }
+  
+  // Handle key press for adding features
+  const handleKeyPress = (e, featureType) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (featureType === 'interior') {
+        addInteriorFeature()
+      } else if (featureType === 'exterior') {
+        addExteriorFeature()
+      }
     }
   }
   
@@ -507,6 +638,94 @@ export default function PropertyForm({ property = null }) {
                   </p>
                 </div>
               </div>
+            </div>
+            
+            {/* Interior Features */}
+            <div className="sm:col-span-3">
+              <label htmlFor="newInteriorFeature" className="block text-sm font-medium text-gray-700">
+                Interior Features
+              </label>
+              <div className="mt-2">
+                <div className="flex">
+                  <input
+                    type="text"
+                    id="newInteriorFeature"
+                    name="newInteriorFeature"
+                    value={newInteriorFeature}
+                    onChange={handleChange}
+                    onKeyPress={(e) => handleKeyPress(e, 'interior')}
+                    className="shadow-sm focus:ring-brand-primary focus:border-brand-primary block w-full text-base py-2 px-3 border-gray-300 rounded-l-md"
+                    placeholder="E.g., Modern kitchen"
+                  />
+                  <button
+                    type="button"
+                    onClick={addInteriorFeature}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md shadow-sm text-white bg-brand-primary hover:bg-brand-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {formData.interiorFeatures.map((feature, index) => (
+                    <div key={index} className="inline-flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm font-medium text-gray-800">
+                      {feature}
+                      <button
+                        type="button"
+                        onClick={() => removeInteriorFeature(index)}
+                        className="ml-2 inline-flex text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">Remove</span>
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="mt-1 text-sm text-gray-500">Add features one by one</p>
+            </div>
+            
+            {/* Exterior Features */}
+            <div className="sm:col-span-3">
+              <label htmlFor="newExteriorFeature" className="block text-sm font-medium text-gray-700">
+                Exterior Features
+              </label>
+              <div className="mt-2">
+                <div className="flex">
+                  <input
+                    type="text"
+                    id="newExteriorFeature"
+                    name="newExteriorFeature"
+                    value={newExteriorFeature}
+                    onChange={handleChange}
+                    onKeyPress={(e) => handleKeyPress(e, 'exterior')}
+                    className="shadow-sm focus:ring-brand-primary focus:border-brand-primary block w-full text-base py-2 px-3 border-gray-300 rounded-l-md"
+                    placeholder="E.g., Swimming pool"
+                  />
+                  <button
+                    type="button"
+                    onClick={addExteriorFeature}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md shadow-sm text-white bg-brand-primary hover:bg-brand-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {formData.exteriorFeatures.map((feature, index) => (
+                    <div key={index} className="inline-flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm font-medium text-gray-800">
+                      {feature}
+                      <button
+                        type="button"
+                        onClick={() => removeExteriorFeature(index)}
+                        className="ml-2 inline-flex text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">Remove</span>
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="mt-1 text-sm text-gray-500">Add features one by one</p>
             </div>
             
             {/* Images */}

@@ -71,6 +71,14 @@ const PropertySchema = new mongoose.Schema({
     type: [String],
     required: [true, 'Please provide at least one image URL']
   },
+  interiorFeatures: {
+    type: [String],
+    default: []
+  },
+  exteriorFeatures: {
+    type: [String],
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now

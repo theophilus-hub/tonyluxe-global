@@ -21,6 +21,7 @@ export default function PropertyDetailPage() {
         }
         
         const data = await response.json();
+        console.log('Property data received:', data.property);
         setProperty(data.property);
       } catch (err) {
         console.error('Error fetching property details:', err);

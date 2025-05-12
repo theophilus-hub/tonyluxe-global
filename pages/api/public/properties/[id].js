@@ -40,6 +40,8 @@ export default async function handler(req, res) {
         status: property.status,
         propertyType: property.propertyType,
         amenities: property.amenities || [],
+        interiorFeatures: property.interiorFeatures || [],
+        exteriorFeatures: property.exteriorFeatures || [],
         images: property.images || [],
         featured: property.featured,
         createdAt: property.createdAt,
@@ -48,7 +50,6 @@ export default async function handler(req, res) {
       
       return res.status(200).json({ property: formattedProperty });
     } catch (error) {
-      console.error('Error fetching property:', error);
       return res.status(500).json({ error: 'Failed to fetch property' });
     }
   } else {

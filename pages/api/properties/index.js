@@ -66,7 +66,28 @@ export default async function handler(req, res) {
           return res.status(400).json({ error: 'A property with this title already exists' });
         }
         
-        const property = await Property.create(req.body);
+        console.log('Property creation request body:', req.body);
+        console.log('Interior features in request:', req.body.interiorFeatures);
+        console.log('Exterior features in request:', req.body.exteriorFeatures);
+        
+        // Ensure interior and exterior features are arrays
+        const createData = {
+          ...req.body,
+          interiorFeatures: Array.isArray(req.body.interiorFeatures) ? req.body.interiorFeatures : [],
+          exteriorFeatures: Array.isArray(req.body.exteriorFeatures) ? req.body.exteriorFeatures : []
+        };
+        
+        console.log('Processed create data:', {
+          interiorFeatures: createData.interiorFeatures,
+          exteriorFeatures: createData.exteriorFeatures
+        });
+        
+        const property = await Property.create(createData);
+        
+        console.log('Created property:', property);
+        console.log('Interior features after creation:', property.interiorFeatures);
+        console.log('Exterior features after creation:', property.exteriorFeatures);
+        
         return res.status(201).json({ property });
       } catch (error) {
         // Handle MongoDB duplicate key error

@@ -24,9 +24,16 @@ export default function EditPropertyPage({ params }) {
         }
         
         const data = await response.json()
-        setProperty(data.property)
+        
+        // Ensure interior and exterior features are properly formatted
+        const processedProperty = {
+          ...data.property,
+          interiorFeatures: Array.isArray(data.property?.interiorFeatures) ? data.property.interiorFeatures : [],
+          exteriorFeatures: Array.isArray(data.property?.exteriorFeatures) ? data.property.exteriorFeatures : []
+        }
+        
+        setProperty(processedProperty)
       } catch (err) {
-        console.error('Error fetching property:', err)
         setError(err.message)
       } finally {
         setLoading(false)
