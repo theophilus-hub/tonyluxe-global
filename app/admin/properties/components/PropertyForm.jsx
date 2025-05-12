@@ -9,6 +9,7 @@ import {
   Loader2
 } from 'lucide-react'
 import Image from 'next/image'
+import { authenticatedFetch } from '../../../../lib/apiUtils'
 
 export default function PropertyForm({ property = null }) {
   const router = useRouter()
@@ -254,10 +255,29 @@ export default function PropertyForm({ property = null }) {
     })
     
     try {
-      const response = await fetch('/api/upload', {
+      // Create a FormData object for the file upload
+      const uploadOptions = {
         method: 'POST',
-        credentials: 'include', // Include credentials for cross-origin requests
-        body: formData
+        body: formData,
+        // Don't set Content-Type header for multipart/form-data
+        headers: {}
+      };
+      
+      // Get the current session data
+      const sessionResponse = await fetch('/api/auth/session');
+      const sessionData = await sessionResponse.json();
+      
+      // Add session data to headers
+      uploadOptions.headers['X-Session-Data'] = JSON.stringify({
+        role: sessionData?.user?.role || '',
+        email: sessionData?.user?.email || '',
+        name: sessionData?.user?.name || ''
+      });
+      
+      // Make the authenticated request
+      const response = await fetch('/api/upload', {
+        ...uploadOptions,
+        credentials: 'include' // Include credentials for cross-origin requests
       })
       
       if (!response.ok) {
@@ -335,12 +355,9 @@ export default function PropertyForm({ property = null }) {
       
       setUploadProgress(80)
       
-      const response = await fetch(url, {
+      // Use the authenticatedFetch utility for the API request
+      const response = await authenticatedFetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include', // Include credentials for cross-origin requests
         body: JSON.stringify(propertyData)
       })
       

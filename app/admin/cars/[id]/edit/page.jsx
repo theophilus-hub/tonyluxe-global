@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import CarForm from '../../components/CarForm'
+import { authenticatedFetch } from '../../../../../lib/apiUtils'
 
 export default function EditCarPage({ params }) {
   const { id } = params
@@ -17,7 +18,8 @@ export default function EditCarPage({ params }) {
   useEffect(() => {
     const fetchCar = async () => {
       try {
-        const response = await fetch(`/api/cars/${id}`)
+        // Use authenticatedFetch to include session data in the request
+        const response = await authenticatedFetch(`/api/cars/${id}`)
         
         if (!response.ok) {
           throw new Error('Failed to fetch car')

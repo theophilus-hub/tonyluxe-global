@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import PropertyForm from '../../components/PropertyForm'
+import { authenticatedFetch } from '../../../../../lib/apiUtils'
 
 export default function EditPropertyPage({ params }) {
   const { id } = params
@@ -17,7 +18,8 @@ export default function EditPropertyPage({ params }) {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const response = await fetch(`/api/properties/${id}`)
+        // Use authenticatedFetch to include session data in the request
+        const response = await authenticatedFetch(`/api/properties/${id}`)
         
         if (!response.ok) {
           throw new Error('Failed to fetch property')
