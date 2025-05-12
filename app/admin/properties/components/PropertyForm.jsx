@@ -256,6 +256,7 @@ export default function PropertyForm({ property = null }) {
     try {
       const response = await fetch('/api/upload', {
         method: 'POST',
+        credentials: 'include', // Include credentials for cross-origin requests
         body: formData
       })
       
@@ -339,6 +340,7 @@ export default function PropertyForm({ property = null }) {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include', // Include credentials for cross-origin requests
         body: JSON.stringify(propertyData)
       })
       
