@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
+import { formatCurrency } from "../lib/utils";
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
 import Link from "next/link";
@@ -178,6 +179,16 @@ const MainImageCarousel = React.forwardRef(function MainImageCarousel({ images, 
 
 export default function ProductPage({ product, type = 'property' }) {
   const carouselRef = React.useRef(null);
+  
+  // Debug logging for price data
+  console.log('ProductPage received product:', {
+    title: product?.title,
+    price: product?.price,
+    formattedPrice: product?.formattedPrice,
+    currency: product?.currency,
+    type: typeof product?.price
+  });
+  
   // Determine if this is a property or car
   const isProperty = type === 'property';
   const isCar = type === 'car';
@@ -198,7 +209,7 @@ export default function ProductPage({ product, type = 'property' }) {
         {
           icon: <DollarSignIcon className="w-5 h-5 text-contentstrong" />,
           label: "Price:",
-          value: product?.formattedPrice || `₦${product?.price?.toLocaleString() || '0'}`,
+          value: product?.formattedPrice || formatCurrency(product?.price, product?.currency),
         },
         {
           icon: <BookmarkIcon className="w-5 h-5 text-contentstrong" />,
@@ -245,7 +256,7 @@ export default function ProductPage({ product, type = 'property' }) {
         {
           icon: <DollarSignIcon className="w-5 h-5 text-contentstrong" />,
           label: "Price:",
-          value: product?.formattedPrice || `₦${product?.price?.toLocaleString() || '0'}`,
+          value: product?.formattedPrice || formatCurrency(product?.price, product?.currency),
         },
       ];
       
@@ -414,7 +425,7 @@ export default function ProductPage({ product, type = 'property' }) {
             <Card className="w-full lg:w-[350px] h-fit lg:mt-[68px] mt-4 rounded-2xl overflow-hidden">
               <CardContent className="flex flex-col gap-[18px] p-6">
                 <h2 className="font-heading-4 font-[number:var(--heading-4-font-weight)] text-contentmuted text-[length:var(--heading-4-font-size)] tracking-[var(--heading-4-letter-spacing)] leading-[var(--heading-4-line-height)] [font-style:var(--heading-4-font-style)]">
-                  {product?.formattedPrice || `₦${product?.price?.toLocaleString() || '0'}`}
+                  {product?.formattedPrice || formatCurrency(product?.price, product?.currency)}
                 </h2>
 
                 <Separator className="w-full" />

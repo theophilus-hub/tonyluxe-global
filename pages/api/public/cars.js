@@ -90,7 +90,7 @@ export default async function handler(req, res) {
         id: car._id.toString(),
         title: car.title,
         image: car.images[0] || '/placeholder-car.jpg', // Use first image or placeholder
-        price: `₦${car.price.toLocaleString()}`,
+        price: car.price, // Return raw numeric price for frontend formatting
         location: car.location || 'Nigeria',
         bedBath: `${car.make}/${car.model}`, // Reusing bedBath field for make/model
         status: car.status,
@@ -98,7 +98,8 @@ export default async function handler(req, res) {
         make: car.make,
         model: car.model,
         year: car.year,
-        featured: car.featured
+        featured: car.featured,
+        currency: car.currency
       }));
       
       return res.status(200).json({ 

@@ -2,6 +2,20 @@ import connectToDatabase from '../../../../lib/mongodb';
 import Car from '../../../../models/Car';
 import { ObjectId } from 'mongodb';
 
+// Currency utility function for server-side
+function getCurrencySymbol(currency) {
+  return currency === 'USD' ? '$' : '₦';
+}
+
+function formatCurrency(amount, currency = 'NGN') {
+  const symbol = getCurrencySymbol(currency);
+  const numericAmount = parseFloat(amount);
+  
+  if (isNaN(numericAmount)) return `${symbol}0`;
+  
+  return `${symbol}${numericAmount.toLocaleString()}`;
+}
+
 export default async function handler(req, res) {
   // Connect to the database
   try {
@@ -31,7 +45,7 @@ export default async function handler(req, res) {
         title: car.title,
         description: car.description,
         price: car.price,
-        formattedPrice: `₦${car.price.toLocaleString()}`,
+        formattedPrice: formatCurrency(car.price, car.currency),
         location: car.location || 'Nigeria',
         make: car.make,
         model: car.model,

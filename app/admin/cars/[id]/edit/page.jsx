@@ -2,12 +2,12 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import CarForm from '../../components/CarForm'
 import { authenticatedFetch } from '../../../../../lib/apiUtils'
 
 export default function EditCarPage({ params }) {
-  const { id } = params
+  const { id } = use(params)
   const { data: session, status } = useSession()
   const router = useRouter()
   const [car, setCar] = useState(null)

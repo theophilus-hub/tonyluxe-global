@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { formatCurrency } from '../../../lib/utils'
 
 export default function CarsPage() {
   const { data: session } = useSession()
@@ -266,7 +267,7 @@ export default function CarsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">₦{car.price.toLocaleString()}</div>
+                      <div className="text-sm text-gray-900">{formatCurrency(car.price, car.currency)}</div>
                       <div className="text-sm text-gray-500">{car.year}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

@@ -4,6 +4,7 @@ import React from "react";
 import { Card } from "./ui/card";
 import { CarIcon, Calendar, Settings, Tag, MapPin } from "lucide-react";
 import Link from "next/link";
+import { formatCurrency } from "../lib/utils";
 
 export default function CarCard({ car }) {
   return (
@@ -22,7 +23,7 @@ export default function CarCard({ car }) {
           <div className="flex items-center gap-1.5">
             <Tag className="w-5 h-5 text-gray-600" />
             <span className="font-medium text-sm">Price:</span>
-            <span className="font-semibold text-sm">{car.price}</span>
+            <span className="font-semibold text-sm">{formatCurrency(car.price, car.currency)}</span>
           </div>
         </div>
         

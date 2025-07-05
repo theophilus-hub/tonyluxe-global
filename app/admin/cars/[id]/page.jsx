@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { 
@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 
 export default function CarDetailPage({ params }) {
-  const { id } = params
+  const { id } = use(params)
   const { data: session, status } = useSession()
   const router = useRouter()
   const [car, setCar] = useState(null)

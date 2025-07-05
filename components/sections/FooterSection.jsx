@@ -72,7 +72,7 @@ export const FooterSection = () => {
                 />
               </Link>
               <Link 
-                href="https://www.instagram.com/tonyluxeglobal?igsh=ZzN3OW55Y3dmOW56" 
+                href="https://www.instagram.com/tonyluxe.global/" 
                 aria-label="Instagram"
                 target="_blank" 
                 rel="noopener noreferrer"

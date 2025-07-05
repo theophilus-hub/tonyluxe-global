@@ -4,6 +4,7 @@ import React from "react";
 import { BookmarkIcon, MapPinIcon, HomeIcon, Tag, Bath, Bed, Info } from "lucide-react";
 import { Card } from "./ui/card";
 import Link from "next/link";
+import { formatCurrency } from "../lib/utils";
 
 export default function PropertyCard({ property }) {
   return (
@@ -23,7 +24,10 @@ export default function PropertyCard({ property }) {
           <div className="flex items-center gap-1.5">
             <Tag className="w-5 h-5 text-gray-600" />
             <span className="font-medium text-sm">Price:</span>
-            <span className="font-semibold text-sm">{property.price}</span>
+            <span className="font-semibold text-sm">
+              {formatCurrency(property.price, property.currency)}
+              {property.status === 'For Rent' ? '/yr' : ''}
+            </span>
           </div>
         </div>
 

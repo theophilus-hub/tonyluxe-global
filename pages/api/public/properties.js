@@ -77,14 +77,13 @@ export default async function handler(req, res) {
         id: property._id.toString(),
         title: property.title,
         image: property.images[0] || '/placeholder-property.jpg', // Use first image or placeholder
-        price: property.status === 'For Rent' 
-          ? `₦${property.price.toLocaleString()}/yr` 
-          : `₦${property.price.toLocaleString()}`,
+        price: property.price, // Return raw numeric price for frontend formatting
         location: property.location,
         bedBath: `${property.bedrooms}/${property.bathrooms}`,
         status: property.status,
         propertyType: property.propertyType,
-        featured: property.featured
+        featured: property.featured,
+        currency: property.currency
       }));
       
       return res.status(200).json({ 

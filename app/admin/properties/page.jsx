@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { formatCurrency } from '../../../lib/utils'
 
 export default function PropertiesPage() {
   const { data: session } = useSession()
@@ -268,7 +269,7 @@ export default function PropertiesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">₦{property.price.toLocaleString()}</div>
+                      <div className="text-sm text-gray-900">{formatCurrency(property.price, property.currency)}</div>
                       <div className="text-sm text-gray-500">{property.propertyType}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

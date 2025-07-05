@@ -17,6 +17,17 @@ const CarSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please provide a price for this car']
   },
+  currency: {
+    type: String,
+    required: [true, 'Please provide a currency for this car'],
+    enum: ['NGN', 'USD'],
+    default: 'NGN'
+  },
+  location: {
+    type: String,
+    required: [true, 'Please provide a location for this car'],
+    maxlength: [200, 'Location cannot be more than 200 characters']
+  },
   make: {
     type: String,
     required: [true, 'Please provide the car make']

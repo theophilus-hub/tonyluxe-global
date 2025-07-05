@@ -17,6 +17,12 @@ const PropertySchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please provide a price for this property']
   },
+  currency: {
+    type: String,
+    required: [true, 'Please provide a currency for this property'],
+    enum: ['NGN', 'USD'],
+    default: 'NGN'
+  },
   location: {
     type: String,
     required: [true, 'Please provide a location for this property'],

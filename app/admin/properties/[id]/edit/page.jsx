@@ -2,12 +2,12 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import PropertyForm from '../../components/PropertyForm'
 import { authenticatedFetch } from '../../../../../lib/apiUtils'
 
 export default function EditPropertyPage({ params }) {
-  const { id } = params
+  const { id } = use(params)
   const { data: session, status } = useSession()
   const router = useRouter()
   const [property, setProperty] = useState(null)

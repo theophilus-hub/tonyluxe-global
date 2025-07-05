@@ -19,6 +19,7 @@ export default function PropertyForm({ property = null }) {
     title: '',
     description: '',
     price: '',
+    currency: 'NGN',
     location: '',
     bedrooms: '',
     bathrooms: '',
@@ -70,6 +71,18 @@ export default function PropertyForm({ property = null }) {
   
   // Determine which status options to use based on property type
   const statusOptions = formData.propertyType === 'Short Let' ? shortLetStatusOptions : regularStatusOptions
+  
+  // Currency options
+  const currencyOptions = [
+    { value: 'NGN', label: 'Nigerian Naira (₦)', symbol: '₦' },
+    { value: 'USD', label: 'US Dollar ($)', symbol: '$' }
+  ]
+  
+  // Get currency symbol for display
+  const getCurrencySymbol = (currency) => {
+    const currencyOption = currencyOptions.find(option => option.value === currency)
+    return currencyOption ? currencyOption.symbol : '₦'
+  }
   
   // Initialize form with property data if editing
   useEffect(() => {
@@ -131,6 +144,7 @@ export default function PropertyForm({ property = null }) {
         title: property.title || '',
         description: property.description || '',
         price: property.price || '',
+        currency: property.currency || 'NGN',
         location: property.location || '',
         bedrooms: property.bedrooms || '',
         bathrooms: property.bathrooms || '',
@@ -485,14 +499,37 @@ export default function PropertyForm({ property = null }) {
               </div>
             </div>
             
+            {/* Currency Selection */}
+            <div className="sm:col-span-2">
+              <label htmlFor="currency" className="block text-sm font-medium text-gray-700">
+                Currency *
+              </label>
+              <div className="mt-2">
+                <select
+                  name="currency"
+                  id="currency"
+                  value={formData.currency}
+                  onChange={handleChange}
+                  className="shadow-sm focus:ring-brand-primary focus:border-brand-primary block w-full text-base py-2 px-3 border-gray-300 rounded-md"
+                  required
+                >
+                  {currencyOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             {/* Price */}
             <div className="sm:col-span-2">
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                Price (₦) *
+                Price ({getCurrencySymbol(formData.currency)}) *
               </label>
               <div className="mt-2 relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="text-gray-500">₦</span>
+                  <span className="text-gray-500">{getCurrencySymbol(formData.currency)}</span>
                 </div>
                 <input
                   type="number"
